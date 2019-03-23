@@ -28,13 +28,43 @@ function rand_gen_key() {
     return randStr
 }
 
-function is_key_valid() {
-    while(status) {
-        
+function is_status_not_waiting(key) {
+    if (key in onGoingReqs) {
+        if(onGoingReqs[key].status !== 'waiting') {
+            return 1;
+        } else {
+            return 0;
+        }
+    } else {
+        return -1;
     }
 }
 
-const ongoingReqs;
+function change_status(key, status) {
+    if (key in onGoingReqs) {
+        onGoingReqs[key].status = status
+    } else {
+        return -1;
+    }
+}
+
+function delete_status(key) {
+    delete onGoingReqs[key]
+}
+
+function check_status(key) {
+    var request = require('request');
+    request('http://localhost:8080/lifelayer/status/'+key, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            if (is_status_not_waiting == -1) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+    })
+}
+const onGoingReqs = {};
 var attrquery = {
     attr_name: "",
     comparison: "",
@@ -44,22 +74,34 @@ var attrquery = {
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.post('/request', function(req, res) {
     var key = rand_gen_key();
-    
-    ongoingReqs[key] = {
+    var required = req.body.required
+    var optional = req.body.optional
+    onGoingReqs[key] = {
+        'req': req.body,
         'status': 'waiting'
     }
-    res.json({ 'key': key, 'status': ongoingReqs[key], 'required': [attrquery, attrquery], 'optional': [attrquery]});
+    res.send(key);
+});
+
+router.get('/request/:key', function(req, rest) {
+    var key = req.params.key
+    if(key in onGoingReqs) {
+        res.json({'request': ongoingReqs[key].req})
+    } else {
+        res.json(({'status': 'ERROR: Invalid key'}))
+    }
 });
 
 router.get('/status/:key', function(req, res) {
-    var key = req.param.key;
-    res.json('status': ongoingReqs[key])
+    var key = req.params.key
+    if(key in onGoingReqs) {
+        res.json({'status': ongoingReqs[key].status})
+    } else {
+        res.json(({'status': 'ERROR: Invalid key'}))
+    }
 });
 
-router.get('/status/:key', function(req, res) {
-    var key = req.param.key;
-    res.json({'status': ongoingReqs[key].});
-});
+
 
 
 
