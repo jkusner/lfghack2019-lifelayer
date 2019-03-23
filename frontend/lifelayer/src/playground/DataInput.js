@@ -7,7 +7,7 @@ export default class DataInput extends React.Component {
     const {requestData, addAttr} = this.props;
     return (
       <>
-        <p>App name: <Input onChange={this.props.onAppNameChange} value={requestData.app_name}/></p>
+        <p>App name: <Input onChange={(e) => this.props.onAppNameChange(e.target.value)} value={requestData.app_name}/></p>
         <Header as="h3" dividing>Required Attributes</Header>
         <AttributePool
           type="required"

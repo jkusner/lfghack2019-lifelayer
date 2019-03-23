@@ -84,6 +84,10 @@ export default class APIPlayground extends React.Component {
     }))
   }
 
+  _submit = () => {
+    
+  }
+
   render() {
     return (
       <Container style={{marginTop:20}}>
@@ -97,7 +101,7 @@ export default class APIPlayground extends React.Component {
                 ...state,
                 requestData: {
                   ...state.requestData,
-                  app_name: newName.target.value,
+                  app_name: newName,
                   api_key: randomAPIKey()
                 }
               }))}
