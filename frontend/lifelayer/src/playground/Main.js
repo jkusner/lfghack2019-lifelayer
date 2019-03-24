@@ -117,6 +117,12 @@ export default class APIPlayground extends React.Component {
               setAttrCompareTo={this._setAttrCompareTo}
               removeAttr={this._removeAttr}
             />
+            <Divider />
+            <Button
+              onClick={this._submit}
+              disabled={this.state.requestData.required.length + this.state.requestData.optional.length === 0}>
+              Submit
+            </Button>
           </Grid.Column>
           <Grid.Column>
             <Header as="h2" dividing>Request JSON</Header>
@@ -125,12 +131,6 @@ export default class APIPlayground extends React.Component {
             </pre>
           </Grid.Column>
         </Grid>
-        <Divider />
-        <Button
-          onClick={this._submit}
-          disabled={this.state.requestData.required.length + this.state.requestData.optional.length === 0}>
-          Submit
-        </Button>
         {this.state.submitting && <CustomerUIContainer requestData={this.state.requestData}/>}
       </Container>
     );

@@ -2,8 +2,8 @@ import citi from './citi.png'
 
 const IdentityProviders = [
   {
-    key: "Citi",
-    value: "Citi",
+    key: "Citibank",
+    value: "Citibank",
     text: "Citibank",
     image: citi
   }

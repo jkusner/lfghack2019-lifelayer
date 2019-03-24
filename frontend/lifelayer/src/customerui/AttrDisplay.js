@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid } from 'semantic-ui-react'
+import { Table } from 'semantic-ui-react'
 import ProviderDropdown from './ProviderDropdown'
 
 // I'm sorry. Running out of time
@@ -39,24 +39,28 @@ function rightSide(attr) {
 }
 
 export default class AttrDisplay extends React.Component {
-  state = {checked: true, provider: 'citi'}
+  state = {provider: 'Citibank'}
   render() {
     const {attr, required} = this.props
     return <>
-      <Grid columns={2}>
-        <Grid.Column style={{fontSize:'1.1em'}}>
+      <Table.Row>
+        <Table.Cell style={{fontSize:'1.1em'}}>
           If your{' '}
           <span style={{fontWeight: 700}}>
             {attrName(attr)}
           </span>{' '}
           {opName(attr)}{' '}
-          {rightSide(attr)}{' '}
+          <span style={{fontWeight: 700}}>{rightSide(attr)}</span>{' '}
           {required && <span style={{color:'red'}}>*</span>}
-        </Grid.Column>
-        <Grid.Column style={{textAlign: "right"}}>
-          <ProviderDropdown required={required}/>
-        </Grid.Column>
-      </Grid>
+        </Table.Cell>
+        <Table.Cell style={{textAlign: "left"}}>
+          <ProviderDropdown
+            attr={attr}
+            value={this.state.provider}
+            required={required}
+            onChange={(e, {value}) => this.props.onProviderChosen(attr.attr_name, value)}/>
+        </Table.Cell>
+      </Table.Row>
     </>;
   }
 }

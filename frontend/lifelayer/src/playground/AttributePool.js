@@ -27,7 +27,7 @@ export default class AttributePool extends React.Component {
     return (
       <Table>
         <Table.Body>
-          {pool.map(attr =>
+          {pool.length === 0 ? <div style={{fontSize:'.75em', textAlign: 'center'}}>Nothing here.</div> : pool.map(attr =>
             <Table.Row key={attr.name || attr.attr_name}>
               <Table.Cell>
                 {attr.name || attr.attr_name} {attr.type && `(${attr.type})`}
