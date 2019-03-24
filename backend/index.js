@@ -49,8 +49,14 @@ function delete_request(key) {
 function get_answers(questions, attrs_providers) {
     let answers = {}
     for(param of questions) {
+        let attr_name = param.attr_name
         //console.log(param)
-        answers[param.attr_name] = {answer: smart_retrieve(param), provided_by: attrs_providers[param.attr_name]}
+        if(attrs_providers[attr_name] === 'hide') {
+            answers[attr_name] = {answer: null, provided_by: null}
+        } else {
+            answers[attr_name] = {answer: smart_retrieve(param), provided_by: attrs_providers[attr_name]}
+        }
+        
     }
     return {AnswersResponse: answers}
 }
