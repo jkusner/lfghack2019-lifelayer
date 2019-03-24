@@ -1,8 +1,7 @@
-
 // call the packages we need
-var express = require('express');        // call express
-var app = express();                 // define our app using express
-var bodyParser = require('body-parser');
+let express = require('express');        // call express
+let app = express();                 // define our app using express
+let bodyParser = require('body-parser');
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -16,22 +15,22 @@ app.use(function(req, res, next) {
     next();
 });
 
-var port = process.env.PORT || 8080;        // set our port
+let port = process.env.PORT || 8080;        // set our port
 
 // ROUTES FOR OUR API
 // =============================================================================
-var router = express.Router();              // get an instance of the express Router
+let router = express.Router();              // get an instance of the express Router
 
 function rand_gen_key() {
-    var dict = 'abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIGKLMNOPQRSTUVWXYZ'
-    var randStr = ''
-    var len = dict.length-1
-    var i;
+    let dict = 'abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIGKLMNOPQRSTUVWXYZ'
+    let randStr = ''
+    let len = dict.length-1
+    let i;
     for( i = 0; i <= 128; i++) {
-        var n = Math.floor(Math.random() * len) + 0
+        let n = Math.floor(Math.random() * len) + 0
         randStr += dict.charAt(n)
     }
-    console.log(randStr)
+    //console.log(randStr)
     return randStr
 }
 
@@ -59,11 +58,92 @@ function delete_status(key) {
     delete onGoingReqs[key]
 }
 
+function get_answers(questions) {
+    let answers = {}
+    for(param of questions) {
+        //console.log(param)
+        answers[param.attr_name] = smart_retrieve(param)
+    }
+    return {AnswersResponse: answers}
+}
+
+// const data = {
+//     "app_name": "Sample App",
+//     "api_key": "aB3EdRHAP1IWT9bjOAAuhVbslyrhCozI",
+//     "required": [
+//         {
+//         "attr_name": "age",
+//         "arguments": [],
+//         "comparison": "gte",
+//         "compare_to": "21"
+//         },
+//         {
+//         "attr_name": "creditLimit",
+//         "arguments": [],
+//         "comparison": "gte",
+//         "compare_to": "5000"
+//         }
+//     ],
+//     "optional": [
+//         {
+//         "attr_name": "accountBalance",
+//         "arguments": [],
+//         "comparison": "gte",
+//         "compare_to": "10000"
+//         },
+//         {
+//         "attr_name": "accountStatus",
+//         "arguments": [],
+//         "comparison": "eq",
+//         "compare_to": "1"
+//         }
+//     ]
+// }
+
+//console.log({...data.required, ...data.optional})
+
+function smart_retrieve(param) {
+    let credit_data = require('./acct_details')
+    let user_age = 25
+    let user_acct_balance = 2000
+    let attr_name = param.attr_name
+    let compare_to = param.compare_to
+    let comp_op = param.comparison
+    if(attr_name === "creditLimit") {
+        return compare_limit(sum_credit(credit_data), compare_to, comp_op)
+    } else if(attr_name === "accountStatus") {
+        return compare_limit(get_account_status(credit_data), compare_to, comp_op)
+    } else if(attr_name === "age") {
+        return compare_limit(user_age, compare_to, comp_op)
+    } else {
+        return compare_limit(user_acct_balance, compare_to, comp_op)
+    }
+}
+
+function sum_credit(credit_data) {
+    return credit_data.accountGroupSummary[0].accounts.map(x => x.creditCardAccountSummary.creditLimit).reduce((a,b) => a + b)
+}
+
+function get_account_status(credit_data) {
+    return credit_data.accountGroupSummary[0].accounts.some(x => x.creditCardAccountSummary.accountStatus === 'ACTIVE')
+}
+
+function compare_limit(user_limit, provided_limit, comp_op) {
+    user_limit = Number(user_limit)
+    provided_limit = Number(provided_limit)
+    opMap = {"gt": (a, b) => a > b, "lt": (a, b) => a < b, "gte": (a, b) => a >= b, "lte": (a, b) => a <= b,  "eq": (a, b) => a === b, "ne": (a, b) => a !== b}
+    //console.log(comp_op)
+    return opMap[comp_op](user_limit, provided_limit)
+}
+
+
+
+
 const onGoingReqs = {};
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.post('/request', function(req, res) {
-    var key = rand_gen_key();
+    let key = rand_gen_key();
     onGoingReqs[key] = {
         'req': req.body,
         'status': 'waiting'
@@ -72,7 +152,7 @@ router.post('/request', function(req, res) {
 });
 
 router.get('/request/:key', function(req, res) {
-    var key = req.params.key
+    let key = req.params.key
     if(key in onGoingReqs) {
         res.json({'request': onGoingReqs[key].req})
     } else {
@@ -81,7 +161,7 @@ router.get('/request/:key', function(req, res) {
 });
 
 router.get('/status/:key', function(req, res) {
-    var key = req.params.key
+    let key = req.params.key
     if(key in onGoingReqs) {
         res.json({'status': onGoingReqs[key].status})
     } else {
@@ -90,31 +170,18 @@ router.get('/status/:key', function(req, res) {
 });
 
 router.post('/request/:key/reject', function(req, res) {
-    var key = req.params.key
+    let key = req.params.key
     onGoingReqs[key].status = 'reject'
 });
 
 router.post('/request/:key/accept', function(req, res) {
-    var key = req.params.key
+    let key = req.params.key
     onGoingReqs[key].status = 'fetching'
-    var stringList = req.body
-
-
+    let required = onGoingReqs[key].req.required //req.body.required
+    let optional = onGoingReqs[key].req.optional //req.body.optional
+    //console.log([...required, ...optional])    
+    res.json(get_answers([...required, ...optional]));
 });
-
-function check_string_list() {
-    var credit_data = require('./acct_details')
-    //sum_credit(credit_data)
-}
-
-function sum_credit(credit_data) {
-    const reducer = (accumulator, currentValue) => accumulator + currentValue
-    console.log(credit_data.accounts.map(x => x.creditLimit).reduce(reducer))
-}
-
-
-//check_string_list()
-
 
 
 
