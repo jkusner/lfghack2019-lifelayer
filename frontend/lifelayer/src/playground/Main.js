@@ -21,7 +21,7 @@ export default class APIPlayground extends React.Component {
   }}
 
   _addAttr = (name, isRequired) => {
-    const query = {attr_name: name, arguments: [], comparison: "gte", compare_to: 0};
+    const query = {attr_name: name, arguments: [], comparison: name === "accountStatus" ? "eq" : "gte", compare_to: 0};
     this.setState(state => ({
       ...state,
       requestData: {
@@ -65,6 +65,9 @@ export default class APIPlayground extends React.Component {
   }
 
   _setAttrCompareTo = (name, number) => {
+    if (name === 'accountStatus') {
+      number = Math.max(0, Math.min(number, 1))
+    }
     this.setState(state => ({
       ...state,
       requestData: {

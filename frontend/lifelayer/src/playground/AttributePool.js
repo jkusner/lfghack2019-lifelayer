@@ -39,7 +39,7 @@ export default class AttributePool extends React.Component {
                 </>) : (<>
                   <Select
                     onChange={(_, {value}) => this.props.setAttrComparison(attr.attr_name, value)}
-                    options={Comparisons}
+                    options={attr.attr_name==='accountStatus' ? [{key:'=',value:'eq',text:'='}] : Comparisons}
                     value={this.getAttrData(attr.attr_name).comparison}
                     style={{minWidth:0, marginRight:10}} />
                   <Input 
