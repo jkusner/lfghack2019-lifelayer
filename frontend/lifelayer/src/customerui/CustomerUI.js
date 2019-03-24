@@ -26,7 +26,7 @@ export default class CustomerUI extends React.Component {
   }
   _onAcceptClick = () => {
     axios.post(
-      CONFIG.endpoint + '/request/' + this.props.llkey + '/accept',
+      CONFIG.endpoint + '/request/' + this.props.llkey.data + '/accept',
       this.state.providers
     )
       .then(data => {

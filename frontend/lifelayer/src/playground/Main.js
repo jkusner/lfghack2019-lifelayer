@@ -92,12 +92,13 @@ export default class APIPlayground extends React.Component {
   _submit = () => {
     this.setState(state => ({
       ...state,
-      submitting: true
+      submitting: true,
+      showResponse: false
     }))
   }
 
   _onCustomerUIResponse = (data) => {
-    this.setState(state => ({...state, showResponse: true, responseData: data}))
+    this.setState(state => ({...state, showResponse: true, responseData: data, submitting: false}))
   }
 
   render() {
