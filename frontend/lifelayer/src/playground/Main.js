@@ -2,6 +2,7 @@ import React from 'react'
 import { Container, Grid, Header, Divider, Button } from 'semantic-ui-react'
 import DataInput from './DataInput'
 import CustomerUIContainer from '../customerui/CustomerUIContainer'
+import Response from './Response'
 
 function randomAPIKey() {
   const chars = "acbdefghijklmnopqrstuvwxyzABCDEFGHJIJKLMNOPQRSTUVWXYZ1234567890";
@@ -95,6 +96,10 @@ export default class APIPlayground extends React.Component {
     }))
   }
 
+  _onCustomerUIResponse = (data) => {
+    this.setState(state => ({...state, showResponse: true, responseData: data}))
+  }
+
   render() {
     return (
       <Container style={{marginTop:20}}>
@@ -131,7 +136,11 @@ export default class APIPlayground extends React.Component {
             </pre>
           </Grid.Column>
         </Grid>
-        {this.state.submitting && <CustomerUIContainer requestData={this.state.requestData}/>}
+        {this.state.submitting &&
+          <CustomerUIContainer
+            onFinished={this._onCustomerUIResponse}
+            requestData={this.state.requestData}/>}
+        {this.state.showResponse && <Response data={this.state.responseData} />}
       </Container>
     );
   }

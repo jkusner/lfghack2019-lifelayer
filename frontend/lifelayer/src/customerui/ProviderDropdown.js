@@ -13,18 +13,14 @@ function optional(ip) {
 }
 
 export default class AttrDisplay extends React.Component {
-  state = {provider: 'citi'}
-  _onSelectProvider = (provider) => {
-    this.setState({provider});
-  }
   render() {
     const {attr} = this.props;
     const providers = attr.attr_name === "age" ? AgeProviders : IdentityProviders;
     return <>
       <Select
         options={this.props.required ? providers : optional(providers)}
-        value={this.state.provider}
-        onChange={(e, {value}) => this._onSelectProvider(value)}/>
+        value={this.props.provider}
+        onChange={(e, {value}) => this.props.onProviderChosen(value)}/>
     </>;
   }
 }

@@ -39,7 +39,6 @@ function rightSide(attr) {
 }
 
 export default class AttrDisplay extends React.Component {
-  state = {provider: 'Citibank'}
   render() {
     const {attr, required} = this.props
     return <>
@@ -52,14 +51,18 @@ export default class AttrDisplay extends React.Component {
           {opName(attr)}{' '}
           <span style={{fontWeight: 700}}>{rightSide(attr)}</span>{' '}
           {required && <span style={{color:'red'}}>*</span>}
-          <p style={{fontSize: '.75em'}}>Here's a reason.</p>
+          <p style={{fontSize: '.75em'}}>
+            {!required && '(Optional) '}
+            Here's a reason.
+          </p>
         </Table.Cell>
         <Table.Cell style={{textAlign: "left"}}>
           <ProviderDropdown
             attr={attr}
-            value={this.state.provider}
             required={required}
-            onChange={(e, {value}) => this.props.onProviderChosen(attr.attr_name, value)}/>
+            onProviderChosen={value => this.props.onProviderChosen(attr.attr_name, value)}
+            placeholder="Select an option"
+            provider={this.props.provider}/>
         </Table.Cell>
       </Table.Row>
     </>;
