@@ -9,6 +9,13 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+//CORS
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 var port = process.env.PORT || 8080;        // set our port
 
 // ROUTES FOR OUR API
@@ -44,7 +51,7 @@ function change_status(key, status) {
     if (key in onGoingReqs) {
         onGoingReqs[key].status = status
     } else {
-        return -1;
+        return false;
     }
 }
 
@@ -52,30 +59,11 @@ function delete_status(key) {
     delete onGoingReqs[key]
 }
 
-function check_status(key) {
-    var request = require('request');
-    request('http://localhost:8080/lifelayer/status/'+key, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            if (is_status_not_waiting == -1) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-    })
-}
 const onGoingReqs = {};
-var attrquery = {
-    attr_name: "",
-    comparison: "",
-    compare_to: "",
-    app_name: "",
-}
+
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.post('/request', function(req, res) {
     var key = rand_gen_key();
-    var required = req.body.required
-    var optional = req.body.optional
     onGoingReqs[key] = {
         'req': req.body,
         'status': 'waiting'
@@ -83,10 +71,10 @@ router.post('/request', function(req, res) {
     res.send(key);
 });
 
-router.get('/request/:key', function(req, rest) {
+router.get('/request/:key', function(req, res) {
     var key = req.params.key
     if(key in onGoingReqs) {
-        res.json({'request': ongoingReqs[key].req})
+        res.json({'request': onGoingReqs[key].req})
     } else {
         res.json(({'status': 'ERROR: Invalid key'}))
     }
@@ -95,12 +83,37 @@ router.get('/request/:key', function(req, rest) {
 router.get('/status/:key', function(req, res) {
     var key = req.params.key
     if(key in onGoingReqs) {
-        res.json({'status': ongoingReqs[key].status})
+        res.json({'status': onGoingReqs[key].status})
     } else {
         res.json(({'status': 'ERROR: Invalid key'}))
     }
 });
 
+router.post('/request/:key/reject', function(req, res) {
+    var key = req.params.key
+    onGoingReqs[key].status = 'reject'
+});
+
+router.post('/request/:key/accept', function(req, res) {
+    var key = req.params.key
+    onGoingReqs[key].status = 'fetching'
+    var stringList = req.body
+
+
+});
+
+function check_string_list() {
+    var credit_data = require('./acct_details')
+    //sum_credit(credit_data)
+}
+
+function sum_credit(credit_data) {
+    const reducer = (accumulator, currentValue) => accumulator + currentValue
+    console.log(credit_data.accounts.map(x => x.creditLimit).reduce(reducer))
+}
+
+
+//check_string_list()
 
 
 
