@@ -27,7 +27,7 @@ export default class AttributePool extends React.Component {
     return (
       <Table>
         <Table.Body>
-          {pool.map(attr =>
+          {pool.length === 0 ? <div style={{fontSize:'.75em', textAlign: 'center'}}>Nothing here.</div> : pool.map(attr =>
             <Table.Row key={attr.name || attr.attr_name}>
               <Table.Cell>
                 {attr.name || attr.attr_name} {attr.type && `(${attr.type})`}
@@ -39,7 +39,7 @@ export default class AttributePool extends React.Component {
                 </>) : (<>
                   <Select
                     onChange={(_, {value}) => this.props.setAttrComparison(attr.attr_name, value)}
-                    options={Comparisons}
+                    options={attr.attr_name==='accountStatus' ? [{key:'=',value:'eq',text:'='}] : Comparisons}
                     value={this.getAttrData(attr.attr_name).comparison}
                     style={{minWidth:0, marginRight:10}} />
                   <Input 

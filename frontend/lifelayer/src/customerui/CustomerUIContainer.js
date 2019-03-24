@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dimmer, Loader, Modal } from 'semantic-ui-react'
+import { Dimmer, Loader, Modal, Header } from 'semantic-ui-react'
 import axios from 'axios'
 import CONFIG from '../config'
 import CustomerUI from './CustomerUI'
@@ -7,9 +7,9 @@ import CustomerUI from './CustomerUI'
 export default class CustomerUIContainer extends React.Component {
   state = {loading: true, modalOpen: false}
   componentDidMount() {
+    console.log(this.props.requestData)
     axios.post(CONFIG.endpoint + '/request', this.props.requestData)
       .then(data => {
-        console.log('DATA IS HERE!', data)
         this.setState({key: data, loading: false, modalOpen: true})
       })
   }
@@ -20,8 +20,11 @@ export default class CustomerUIContainer extends React.Component {
           <Loader/>
         </Dimmer>
       ) : (
-        <Modal>
-          <CustomerUI requestData={this.props.requestData} />
+        <Modal open={this.state.modalOpen}>
+          <Header>LifeLayer Customer UI Example</Header>
+          <Modal.Content>
+            <CustomerUI requestData={this.props.requestData} key={this.state.key} />
+          </Modal.Content>
         </Modal>
       )
     );

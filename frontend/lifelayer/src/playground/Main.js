@@ -21,7 +21,7 @@ export default class APIPlayground extends React.Component {
   }}
 
   _addAttr = (name, isRequired) => {
-    const query = {attr_name: name, arguments: [], comparison: "gte", compare_to: 0};
+    const query = {attr_name: name, arguments: [], comparison: name === "accountStatus" ? "eq" : "gte", compare_to: 0};
     this.setState(state => ({
       ...state,
       requestData: {
@@ -65,6 +65,9 @@ export default class APIPlayground extends React.Component {
   }
 
   _setAttrCompareTo = (name, number) => {
+    if (name === 'accountStatus') {
+      number = Math.max(0, Math.min(number, 1))
+    }
     this.setState(state => ({
       ...state,
       requestData: {
@@ -114,6 +117,12 @@ export default class APIPlayground extends React.Component {
               setAttrCompareTo={this._setAttrCompareTo}
               removeAttr={this._removeAttr}
             />
+            <Divider />
+            <Button
+              onClick={this._submit}
+              disabled={this.state.requestData.required.length + this.state.requestData.optional.length === 0}>
+              Submit
+            </Button>
           </Grid.Column>
           <Grid.Column>
             <Header as="h2" dividing>Request JSON</Header>
@@ -122,9 +131,7 @@ export default class APIPlayground extends React.Component {
             </pre>
           </Grid.Column>
         </Grid>
-        <Divider />
-        <Button onClick={this._submit}>Submit</Button>
-        {this.state.submitting && <CustomerUIContainer requestData={this.props.requestData}/>}
+        {this.state.submitting && <CustomerUIContainer requestData={this.state.requestData}/>}
       </Container>
     );
   }

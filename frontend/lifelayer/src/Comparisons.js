@@ -3,7 +3,7 @@ const Comparisons = [
   {key: "lte", value: "lte", text: "≤"},
   {key: "gt", value: "gt", text: ">"},
   {key: "gte", value: "gte", text: "≥"},
-  {key: "e", value: "e", text: "="},
+  {key: "eq", value: "eq", text: "="},
 ]
 
 export default Comparisons
