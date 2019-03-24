@@ -46,11 +46,11 @@ function delete_request(key) {
     delete onGoingReqs[key]
 }
 
-function get_answers(questions) {
+function get_answers(questions, attrs_providers) {
     let answers = {}
     for(param of questions) {
         //console.log(param)
-        answers[param.attr_name] = smart_retrieve(param)
+        answers[param.attr_name] = {answer: smart_retrieve(param), provided_by: attrs_providers[param.attr_name]}
     }
     return {AnswersResponse: answers}
 }
@@ -169,8 +169,9 @@ router.post('/request/:key/accept', function(req, res) {
     onGoingReqs[key].status = 'fetching'
     let required = onGoingReqs[key].req.required //req.body.required
     let optional = onGoingReqs[key].req.optional //req.body.optional
-    //console.log([...required, ...optional])    
-    res.json(get_answers([...required, ...optional]));
+    //console.log([...required, ...optional])
+
+    res.json(get_answers([...required, ...optional], req.body));
 });
 
 
