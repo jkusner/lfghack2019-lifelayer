@@ -123,8 +123,12 @@ export default class APIPlayground extends React.Component {
           </Grid.Column>
         </Grid>
         <Divider />
-        <Button onClick={this._submit}>Submit</Button>
-        {this.state.submitting && <CustomerUIContainer requestData={this.props.requestData}/>}
+        <Button
+          onClick={this._submit}
+          disabled={this.state.requestData.required.length + this.state.requestData.optional.length === 0}>
+          Submit
+        </Button>
+        {this.state.submitting && <CustomerUIContainer requestData={this.state.requestData}/>}
       </Container>
     );
   }
