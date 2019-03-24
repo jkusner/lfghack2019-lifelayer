@@ -21,7 +21,7 @@ export default class CustomerUIContainer extends React.Component {
         </Dimmer>
       ) : (
         <Modal open={this.state.modalOpen}>
-          <Header>LifeLayer</Header>
+          <Header>LifeLayer Customer UI Example</Header>
           <Modal.Content>
             <CustomerUI requestData={this.props.requestData} key={this.state.key} />
           </Modal.Content>

@@ -52,6 +52,7 @@ export default class AttrDisplay extends React.Component {
           {opName(attr)}{' '}
           <span style={{fontWeight: 700}}>{rightSide(attr)}</span>{' '}
           {required && <span style={{color:'red'}}>*</span>}
+          <p style={{fontSize: '.75em'}}>Here's a reason.</p>
         </Table.Cell>
         <Table.Cell style={{textAlign: "left"}}>
           <ProviderDropdown
