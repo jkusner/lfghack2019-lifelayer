@@ -34,18 +34,6 @@ function rand_gen_key() {
     return randStr
 }
 
-function is_status_not_waiting(key) {
-    if (key in onGoingReqs) {
-        if(onGoingReqs[key].status !== 'waiting') {
-            return 1;
-        } else {
-            return 0;
-        }
-    } else {
-        return -1;
-    }
-}
-
 function change_status(key, status) {
     if (key in onGoingReqs) {
         onGoingReqs[key].status = status
@@ -54,7 +42,7 @@ function change_status(key, status) {
     }
 }
 
-function delete_status(key) {
+function delete_request(key) {
     delete onGoingReqs[key]
 }
 
@@ -138,9 +126,10 @@ function compare_limit(user_limit, provided_limit, comp_op) {
 
 
 
-
+//onGoingReqs hashmap
 const onGoingReqs = {};
 
+//API ENDPOINTS
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.post('/request', function(req, res) {
     let key = rand_gen_key();
@@ -172,6 +161,7 @@ router.get('/status/:key', function(req, res) {
 router.post('/request/:key/reject', function(req, res) {
     let key = req.params.key
     onGoingReqs[key].status = 'reject'
+    res.json({"AnswersResponse": "The request has been rejected"})
 });
 
 router.post('/request/:key/accept', function(req, res) {
