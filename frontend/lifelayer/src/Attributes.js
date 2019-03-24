@@ -12,7 +12,7 @@ const Attributes = [
     "type": "number"
   },
   {
-    "name": "debitLimit",
+    "name": "identity",
     "type": "number"
   }
 ]

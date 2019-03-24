@@ -1,6 +1,7 @@
 import React from 'react'
 import { Container, Grid, Header, Divider, Button } from 'semantic-ui-react'
 import DataInput from './DataInput'
+import CustomerUIContainer from '../customerui/CustomerUIContainer'
 
 function randomAPIKey() {
   const chars = "acbdefghijklmnopqrstuvwxyzABCDEFGHJIJKLMNOPQRSTUVWXYZ1234567890";
@@ -85,7 +86,10 @@ export default class APIPlayground extends React.Component {
   }
 
   _submit = () => {
-    
+    this.setState(state => ({
+      ...state,
+      submitting: true
+    }))
   }
 
   render() {
@@ -120,6 +124,7 @@ export default class APIPlayground extends React.Component {
         </Grid>
         <Divider />
         <Button onClick={this._submit}>Submit</Button>
+        {this.state.submitting && <CustomerUIContainer requestData={this.props.requestData}/>}
       </Container>
     );
   }
